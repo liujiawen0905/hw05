@@ -11,9 +11,9 @@ class Starter extends React.Component {
     super(props);
     this.state = {
       gameBoard: this.initTiles(),
-      gameStatus: false,
       tempValue: null,
-      tempID: null
+      tempID: null,
+      isChecking: false
     }
     this.initTiles = this.check_match.bind(this);
     this.check_match = this.check_match.bind(this);
@@ -87,32 +87,37 @@ class Starter extends React.Component {
   }
 
   check_match(id){
-    let v = this.state.gameBoard[id].value;
-    let t = this.state.gameBoard;
-    console.log(this.state.gameBoard[id]);
-    t[id].isHidden = false;
-    this.setState({gameBoard: t});
-    console.log(this.state.gameBoard[id]);
-
-    if(this.state.tempValue != null){
-      if(this.state.tempValue == v){
-        t[id].isHidden = false;
-        t[id].hasMatched = true;
-        this.setState({gameBoard: t, tempValue: null});
-      }
-      else {
-        // console.log("here");
-        t[id].isHidden = false;
-        setTimeout(()=> {
-          t[id].isHidden = true;
-          t[this.state.tempID].isHidden = true;
-          this.setState({gameBoard: t, tempValue:null, tempID:null});
-        }, 1000);
-      }
+    if(this.state.isChecking){
+      return
     }
-    else{
-      this.setState({gameBoard:t, tempValue: v, tempID: id});
-     }
+    else {
+      let v = this.state.gameBoard[id].value;
+      let t = this.state.gameBoard;
+      console.log(this.state.gameBoard[id]);
+      t[id].isHidden = false;
+      this.setState({gameBoard: t});
+      console.log(this.state.gameBoard[id]);
+
+      if(this.state.tempValue != null){
+        this.setState({isChecking: true})
+        if(this.state.tempValue == v){
+          t[id].isHidden = false;
+          t[id].hasMatched = true;
+          this.setState({gameBoard: t, tempValue: null, isChecking: false});
+        }
+        else {
+          t[id].isHidden = false;
+          setTimeout(()=> {
+            t[id].isHidden = true;
+            t[this.state.tempID].isHidden = true;
+            this.setState({gameBoard: t, tempValue:null, tempID:null, isChecking: false});
+          }, 1000);
+        }
+      }
+      else{
+        this.setState({gameBoard:t, tempValue: v, tempID: id, isChecking: false});
+       }
+    }
   }
 }
 
