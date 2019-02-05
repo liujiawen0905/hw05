@@ -49,7 +49,7 @@ class Starter extends React.Component {
       value={this.state.gameBoard[i].value}
       isHidden={this.state.gameBoard[i].isHidden}
       hasMatched={this.state.gameBoard[i].hasMatched}
-      ClickOnTile={this.check_match}
+      ClickOnTile={this.check_match.bind(this)}
       />
     );
   }
@@ -89,7 +89,9 @@ class Starter extends React.Component {
   check_match(id){
     let v = this.state.gameBoard[id].value;
     let t = this.state.gameBoard;
+    console.log(this.state.gameBoard[id]);
     t[id].isHidden = false;
+    this.setState({gameBoard: t});
     console.log(this.state.gameBoard[id]);
 
     if(this.state.tempValue != null){
@@ -100,6 +102,7 @@ class Starter extends React.Component {
       }
       else {
         // console.log("here");
+        t[id].isHidden = false;
         setTimeout(()=> {
           t[id].isHidden = true;
           t[this.state.tempID].isHidden = true;
@@ -109,7 +112,7 @@ class Starter extends React.Component {
     }
     else{
       this.setState({gameBoard:t, tempValue: v, tempID: id});
-    }
+     }
   }
 }
 
