@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import '../css/app.css'
 
-export default function game_init(root, channel) {
-  ReactDOM.render(<Starter channel={channel} />, root);
-}
+// export default function game_init(root, channel) {
+//   ReactDOM.render(<Starter channel={channel} />, root);
+// }
 
-class Starter extends React.Component {
+export default class Starter extends React.Component {
   constructor(props) {
     super(props);
     this.channel = props.channel;
@@ -17,12 +17,14 @@ class Starter extends React.Component {
       tempID: null,
       isChecking: false
     }
-    this.initTiles = this.check_match.bind(this);
+    // this.initTiles   = this.initTiles.bind(this);
     this.check_match = this.check_match.bind(this);
+    this.got_view    = this.got_view.bind(this);
 
+    console.log(">>>> hahaha ");
     this.channel
         .join()
-        .receive("ok", this.got_view.bind(this))
+        .receive("ok", this.got_view)
         .receive("error", resp => { console.log("Unable to join", resp); });
   }
 
@@ -60,7 +62,7 @@ class Starter extends React.Component {
       value={this.state.gameBoard[i].value}
       isHidden={this.state.gameBoard[i].isHidden}
       hasMatched={this.state.gameBoard[i].hasMatched}
-      ClickOnTile={this.check_match.bind(this)}
+      ClickOnTile={this.check_match}
       />
     );
   }
@@ -115,7 +117,7 @@ class Starter extends React.Component {
         if(this.state.tempValue == v){
 
           this.channel.push("matched", {curID: id})
-              .receive.push("ok", this.got_view.bind(this));
+              .receive.push("ok", this.got_view);
           // t[id].isHidden = false;
           // t[id].hasMatched = true;
           // this.setState({gameBoard: t, tempValue: null, isChecking: false});
@@ -126,7 +128,7 @@ class Starter extends React.Component {
           setTimeout(()=> {
 
             this.channel.push("notMatched", {curID: id, tempID: this.state.tempID})
-                .receive("ok", this.got_view.bind(this));
+                .receive("ok", this.got_view);
             // t[id].isHidden = true;
             // t[this.state.tempID].isHidden = true;
             // this.setState({gameBoard: t, tempValue:null, tempID:null, isChecking: false});
@@ -137,7 +139,7 @@ class Starter extends React.Component {
       else{
 
         this.channel.push("flipFirst", {curID: id, curValue: v})
-            .receive("ok", this.got_view.bind(this));
+            .receive("ok", this.got_view);
         // this.setState({gameBoard:t, tempValue: v, tempID: id, isChecking: false});
         this.setState({isChecking: false})
        }
@@ -149,6 +151,8 @@ class Starter extends React.Component {
 class Tile extends React.Component {
   constructor(props) {
     super(props);
+
+    this.handleClick = this.handleClick.bind(this);
   }
 
   handleClick(){
@@ -159,7 +163,7 @@ class Tile extends React.Component {
 
   render (){
     if(this.props.isHidden){
-      return (<button className="tile" onClick={this.handleClick.bind(this)}>
+      return (<button className="tile" onClick={this.handleClick}>
       </button>);
     }
     else if (this.props.hasMatched) {

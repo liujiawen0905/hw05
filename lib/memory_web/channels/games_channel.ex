@@ -1,7 +1,7 @@
 defmodule MemoryWeb.GamesChannel do
   use MemoryWeb, :channel
-  alias Memory.Game, as: Game
-  alias Memory.BackupAgent, as: BackupAgent
+  alias Memory.Game
+  alias Memory.BackupAgent
 
   def join("games:" <> name, payload, socket) do
     if authorized?(payload) do
@@ -34,7 +34,7 @@ defmodule MemoryWeb.GamesChannel do
 
   def handle_in("notMached", %{"curID" => id1, "tempID" => id2}, socket) do
     name = socket.assigns[:name]
-    game = Game.notMached(socket.assigns[:game], id1, id2)
+    game = Game.notMatched(socket.assigns[:game], id1, id2)
     socket = assign(socket, :game, game)
     BackupAgent.put(name,game)
     {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
