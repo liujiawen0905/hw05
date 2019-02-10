@@ -1,46 +1,57 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
+import '../css/app.css'
 
-export default function game_init(root) {
-  ReactDOM.render(<Starter />, root);
+export default function game_init(root, channel) {
+  ReactDOM.render(<Starter channel={channel} />, root);
 }
 
 class Starter extends React.Component {
   constructor(props) {
     super(props);
+    this.channel = props.channel;
     this.state = {
-      gameBoard: this.initTiles(),
+      gameBoard: [],
       tempValue: null,
       tempID: null,
       isChecking: false
     }
     this.initTiles = this.check_match.bind(this);
     this.check_match = this.check_match.bind(this);
-    // console.log(this.state);
 
+    this.channel
+        .join()
+        .receive("ok", this.got_view.bind(this))
+        .receive("error", resp => { console.log("Unable to join", resp); });
   }
 
-  initTiles(){
-    let data = [];
-    for(let i = 'A'.charCodeAt(); i <='H'.charCodeAt(); i++){
-      let t1 = {
-        isHidden: true,
-        hasMatched: false,
-        value: String.fromCharCode(i),
-      }
-
-      let t2 = {
-        isHidden: true,
-        hasMatched: false,
-        value: String.fromCharCode(i),
-      }
-      data.push(t1);
-      data.push(t2);
-    }
-    data =_.shuffle(data);
-    return data;
+  got_view(view){
+    console.log("new view", view);
+    this.setState(view.game);
   }
+
+
+  // initTiles(){
+  //   let data = [];
+  //   for(let i = 'A'.charCodeAt(); i <='H'.charCodeAt(); i++){
+  //     let t1 = {
+  //       isHidden: true,
+  //       hasMatched: false,
+  //       value: String.fromCharCode(i),
+  //     }
+  //
+  //     let t2 = {
+  //       isHidden: true,
+  //       hasMatched: false,
+  //       value: String.fromCharCode(i),
+  //     }
+  //     data.push(t1);
+  //     data.push(t2);
+  //   }
+  //   data =_.shuffle(data);
+  //   return data;
+  // }
 
   renderTile(i){
     return(
@@ -87,35 +98,48 @@ class Starter extends React.Component {
   }
 
   check_match(id){
+    // this.channel.push("guess", {curID: id})
+    //             .receive("ok", this.got_view.bind(this));
     if(this.state.isChecking){
       return
     }
     else {
       let v = this.state.gameBoard[id].value;
       let t = this.state.gameBoard;
-      console.log(this.state.gameBoard[id]);
       t[id].isHidden = false;
       this.setState({gameBoard: t});
-      console.log(this.state.gameBoard[id]);
+      // console.log(this.state.gameBoard[id]);
 
       if(this.state.tempValue != null){
         this.setState({isChecking: true})
         if(this.state.tempValue == v){
-          t[id].isHidden = false;
-          t[id].hasMatched = true;
-          this.setState({gameBoard: t, tempValue: null, isChecking: false});
+
+          this.channel.push("matched", {curID: id})
+              .receive.push("ok", this.got_view.bind(this));
+          // t[id].isHidden = false;
+          // t[id].hasMatched = true;
+          // this.setState({gameBoard: t, tempValue: null, isChecking: false});
+          this.setState({isChecking: false});
         }
         else {
           t[id].isHidden = false;
           setTimeout(()=> {
-            t[id].isHidden = true;
-            t[this.state.tempID].isHidden = true;
-            this.setState({gameBoard: t, tempValue:null, tempID:null, isChecking: false});
+
+            this.channel.push("notMatched", {curID: id, tempID: this.state.tempID})
+                .receive("ok", this.got_view.bind(this));
+            // t[id].isHidden = true;
+            // t[this.state.tempID].isHidden = true;
+            // this.setState({gameBoard: t, tempValue:null, tempID:null, isChecking: false});
+            this.setState({isChecking: false})
           }, 1000);
         }
       }
       else{
-        this.setState({gameBoard:t, tempValue: v, tempID: id, isChecking: false});
+
+        this.channel.push("flipFirst", {curID: id, curValue: v})
+            .receive("ok", this.got_view.bind(this));
+        // this.setState({gameBoard:t, tempValue: v, tempID: id, isChecking: false});
+        this.setState({isChecking: false})
        }
     }
   }
@@ -131,7 +155,6 @@ class Tile extends React.Component {
     if(this.props.isHidden){
       this.props.ClickOnTile(this.props.id);
     }
-
   }
 
   render (){
@@ -140,7 +163,7 @@ class Tile extends React.Component {
       </button>);
     }
     else if (this.props.hasMatched) {
-      return (<button className="tile">
+      return (<button className="matched_tile">
       {this.props.value}
       </button>);
     }
