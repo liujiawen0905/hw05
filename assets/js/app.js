@@ -11,24 +11,25 @@ import css from "../css/app.css";
 //
 import "phoenix_html";
 import $ from "jquery";
-import React from 'react';
-import { render } from 'react-dom';
+// import React from 'react';
+// import { render } from 'react-dom';
 
 // Import local files
 //
 // Local files can be imported directly using relative paths, for example:
 import socket from "./socket"
 
-// import game_init from "./starter-game";
-import Starter from './starter-game';
+import game_init from "./starter-game";
+// import Starter from './starter-game';
 
-function init(){
+function start(){
   let root = document.getElementById('root');
   if (root){
-    let channel = socket.channel(`games:${gameName}`, {});
-    // game_init(root, channel);
-    render(<Starter channel={channel} />, root);
+    // let channel = socket.channel(`games:${gameName}`, {});
+    let channel = socket.channel("games:" + window.gameName, {});
+    game_init(root, channel);
+    // render(<Starter channel={channel} />, root);
   }
 }
 console.log(">>>>> heiheiehi ");
-$(init);
+$(start);

@@ -32,7 +32,7 @@ defmodule MemoryWeb.GamesChannel do
     {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
   end
 
-  def handle_in("notMached", %{"curID" => id1, "tempID" => id2}, socket) do
+  def handle_in("notMatched", %{"curID" => id1, "tempID" => id2}, socket) do
     name = socket.assigns[:name]
     game = Game.notMatched(socket.assigns[:game], id1, id2)
     socket = assign(socket, :game, game)
