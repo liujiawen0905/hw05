@@ -6,6 +6,7 @@ defmodule Memory.Game do
       tempValue: nil,
       tempID: nil,
       isChecking: false,
+      scores: 0,
     }
 
     values = ["A","A","B","B","C","C","D","D","E","E","F","F","G","G","H","H"]
@@ -19,6 +20,7 @@ defmodule Memory.Game do
       gameBoard: game[:gameBoard],
       tempValue: game[:tempValue],
       tempID: game[:tempID],
+      scores: game[:scores],
     }
   end
 
@@ -33,6 +35,7 @@ defmodule Memory.Game do
     game
     |> Map.put(:tempID, nil)
     |> Map.put(:tempValue, nil)
+    |> Map.put(:scores, game[:scores]+1)
     |> setState(id, false, true)
   end
 

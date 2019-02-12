@@ -16,7 +16,8 @@ class Starter extends React.Component {
       gameBoard: [],
       tempValue: null,
       tempID: null,
-      isChecking: false
+      isChecking: false,
+      scores: 0
     };
     // this.initTiles   = this.initTiles.bind(this);
     this.check_match = this.check_match.bind(this);
@@ -53,10 +54,17 @@ class Starter extends React.Component {
   }
 
   render() {
+    let win = "";
+    if (this.state.scores == 8){
+      win = "Congratulation Fions!!!!!!!!!!!!!!!!!!!!!!"
+    }
+
     return(
       <div>
         <div className="row">Memory Game</div>
         <button className="rbtn" onClick={this.restart.bind(this)}> Restart Game </button>
+        <div className="row">Your current scores: {this.state.scores}</div>
+        <div className="row">{win}</div>
         <div className="row">
           {this.renderTile(0)}
           {this.renderTile(1)}
