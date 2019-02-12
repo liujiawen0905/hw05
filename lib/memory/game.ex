@@ -22,17 +22,6 @@ defmodule Memory.Game do
     }
   end
 
-  # def guess(game, id) do
-  #   gameBoard = game[:gameBoard]
-  #   tile = Enum.at(gameBoard, id)
-  #   v = tile[:value]
-  #   if game[:tempValue] == nil do
-  #     |> Map.put(:tempID, id)
-  #     |> Map.put(:tempValue, v)
-  #     |> setState(id, false, false)
-  #   end
-  # end
-
   def flipFirst(game, id, value) do
     game
     |> Map.put(:tempValue, value)
@@ -61,6 +50,10 @@ defmodule Memory.Game do
     newBoard = List.replace_at(game[:gameBoard], id, %{value: v,
     isHidden: isH, hasMatch: hasM})
     Map.put(game, :gameBoard, newBoard)
+  end
+
+  def restart(game) do
+    new()
   end
 
 end

@@ -31,5 +31,5 @@ function start(){
     // render(<Starter channel={channel} />, root);
   }
 }
-console.log(">>>>> heiheiehi ");
+
 $(start);
