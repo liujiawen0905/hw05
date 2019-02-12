@@ -56,7 +56,7 @@ class Starter extends React.Component {
   render() {
     let win = "";
     if (this.state.scores == 8){
-      win = "Congratulation Fions!!!!!!!!!!!!!!!!!!!!!!"
+      win = "Congratulation! You are the KING of memory game"
     }
 
     return(
