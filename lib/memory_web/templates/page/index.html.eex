@@ -1,6 +1,15 @@
+<script>
+  function getChannel() {
+    var input = document.getElementById("input").value;
+    window.location.href='/game/' + input
+  }
+</script>
+
+
 <div class="row">
   <div class="column">
-    <h1 id="index-page">Join a Game</h1>
-    <p><a href="/game/game">Join "Memory Game"</a></p>
+    <h1>Join A Game</h1>
+    <input id="input" type="text"/>
+    <button onclick="getChannel()"> Join a channel</button>
   </div>
 </div>
